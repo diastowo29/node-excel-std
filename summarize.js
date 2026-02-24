@@ -44,11 +44,12 @@ let totalWorkDaysCell = 'R21'
 
 let nameCell = 'C5'
 let empNoCell = 'C6'
+let folderPrefix = 'D:/WORK/NodeJS/nodejs-excel-std/ISC_PAYROLL';
 
 const sheetName = process.argv[2];
 const year = process.argv[3];
 const excelMonthFolder = process.argv[4];
-const sheetFallbackName = process.argv[4];
+const sheetFallbackName = process.argv[2];
 readFileFolder();
 
 /* rl.question('Sheet name ? ', function (sheetInput) {
@@ -138,7 +139,7 @@ async function readExcel (filename) {
             }
 
             if (!worksheet) {
-                console.log('Sheet not found');
+                console.log('Sheet not found: ' + filename);
                 return;
             }
 
