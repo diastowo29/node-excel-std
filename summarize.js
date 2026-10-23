@@ -46,10 +46,10 @@ let nameCell = 'C5'
 let empNoCell = 'C6'
 let folderPrefix = 'D:/WORK/NodeJS/nodejs-excel-std/ISC_PAYROLL';
 
-const sheetName = process.argv[2];
-const year = process.argv[3];
-const excelMonthFolder = process.argv[4];
-const sheetFallbackName = process.argv[2];
+// const sheetName = process.argv[2];
+const year = process.argv[2];
+const excelMonthFolder = process.argv[3];
+// const sheetFallbackName = process.argv[5];
 readFileFolder();
 
 /* rl.question('Sheet name ? ', function (sheetInput) {
@@ -132,19 +132,15 @@ async function readExcel (filename) {
     var worksheet;
     await workbook.xlsx.readFile(filename)
         .then(function() {
-            if (workbook.getWorksheet(sheetName) === undefined) {
-                worksheet = workbook.getWorksheet(sheetFallbackName);
-            } else {
-                worksheet = workbook.getWorksheet(sheetName);
-            }
-
+            const worsheetName = workbook.worksheets.at(workbook.worksheets.length - 1).name;
+            worksheet = workbook.getWorksheet(worsheetName);
             if (!worksheet) {
                 console.log('Sheet not found: ' + filename);
                 return;
             }
-
-            console.log('reading file: ' + worksheet.getCell(empNoCell).value + ' - ' 
-                + worksheet.getCell(nameCell).value + '...');
+            const empCell = worksheet.getCell(empNoCell);
+            const empNameCell = worksheet.getCell(nameCell);
+            console.log(`${worsheetName} - reading: ${empCell.value} - ${empNameCell.value}...`);
 
             newColumn = {
                 name: ((worksheet.getCell(nameCell).value.hasOwnProperty('formula')) ? worksheet.getCell(nameCell).value.result || 0 : worksheet.getCell(nameCell).value),
@@ -189,7 +185,7 @@ async function writeExcel(dataArray){
 
     console.log('===== Generating Summary File =====')
     const workbook = new Excel.Workbook();
-    const worksheet = workbook.addWorksheet(sheetName);
+    const worksheet = workbook.addWorksheet(`${excelMonthFolder} - ${year}`);
 
     worksheet.columns = newColumnsHeader;
     
@@ -227,9 +223,10 @@ async function writeExcel(dataArray){
     }
 
     // save under export.xlsx
-    await workbook.xlsx.writeFile(folderPrefix + '/Summary Result/NODEJS-SUMMARY-' + sheetName + '.xlsx');
+    await workbook.xlsx.writeFile(folderPrefix + '/Summary Result/NODEJS-SUMMARY-' + `${excelMonthFolder} - ${year}` + '.xlsx');
 
     console.log("File is written");
+    return;
 };
 
 async function readFileFolder () {
